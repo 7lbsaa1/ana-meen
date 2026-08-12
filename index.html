@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>أنا مين؟ - Football Mystery 1V1</title>
+  <meta name="description" content="لعبة كرة قدم غامضة 1v1 - اسأل أسئلة واكتشف اللاعب السري">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+  <!-- Login Page -->
+  <div id="loginPage" class="login-page">
+    <!-- Background -->
+    <div class="login-bg"></div>
+    
+    <!-- Particles -->
+    <div class="login-particles">
+      <div class="login-particle"></div>
+      <div class="login-particle"></div>
+      <div class="login-particle"></div>
+      <div class="login-particle"></div>
+      <div class="login-particle"></div>
+      <div class="login-particle"></div>
+      <div class="login-particle"></div>
+      <div class="login-particle"></div>
+      <div class="login-particle"></div>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="login-container">
+      <!-- Left Side - Branding -->
+      <div class="login-branding">
+        <div class="login-logo">
+          <h1 class="login-logo-text">
+            <span class="line1">أنا</span>
+            <span class="line2">مين؟</span>
+          </h1>
+        </div>
+        
+        <div class="login-football">
+          <div class="football-trail"></div>
+          <div class="football-icon">⚽</div>
+        </div>
+        
+        <p class="login-tagline">Football Mystery 1V1</p>
+      </div>
+      
+      <!-- Right Side - Login Form -->
+      <div class="login-form-container">
+        <div class="login-header">
+          <h2 class="login-title">تسجيل الدخول</h2>
+          <p class="login-subtitle">ادخل اسمك للبدء في اللعبة</p>
+        </div>
+        
+        <form id="loginForm" class="login-form">
+          <div id="loginError" class="login-error hidden"></div>
+          
+          <div class="login-input-wrapper">
+            <input 
+              type="text" 
+              id="usernameInput" 
+              class="login-input" 
+              placeholder="اكتب اسمك هنا..."
+              maxlength="20"
+              autocomplete="off"
+              required
+            >
+          </div>
+          
+          <button type="submit" id="loginBtn" class="login-btn">
+            <span id="loginBtnText">دخول</span>
+          </button>
+          
+          <p class="login-privacy">
+            🔒 خصوصيتك محمية - لن نشارك بياناتك
+          </p>
+        </form>
+        
+        <div class="admin-link">
+          <a href="/admin">لوحة التحكم</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Banned Screen -->
+  <div id="bannedScreen" class="banned-screen hidden">
+    <div class="banned-container">
+      <div class="banned-icon">🚫</div>
+      <h1 class="banned-title">تم حظرك</h1>
+      <p class="banned-text">
+        لا يمكنك استخدام لعبة "أنا مين؟" حاليًا.<br>
+        يبدو أن حسابك قد تم تعليقه بسبب مخالفة شروط الاستخدام.
+      </p>
+      <a href="https://www.facebook.com/profile.php?id=61584178882412&locale=ar_AR" target="_blank" class="banned-contact">
+        📩 للتواصل والاستفسار اضغط هنا
+      </a>
+    </div>
+  </div>
+  
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+  
+  <!-- Scripts -->
+  <script type="module">
+    import { initTheme } from '/js/theme.js';
+    import { loginUser, checkBanStatus, getSession } from '/js/auth.js';
+    
+    // Initialize theme
+    initTheme();
+    
+    // Check if already logged in
+    const session = getSession();
+    if (session) {
+      checkAndRedirect(session);
+    }
+    
+    // Login form handler
+    const loginForm = document.getElementById('loginForm');
+    const usernameInput = document.getElementById('usernameInput');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginBtnText = document.getElementById('loginBtnText');
+    const loginError = document.getElementById('loginError');
+    
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const username = usernameInput.value.trim();
+      
+      // Validate
+      if (username.length < 2) {
+        showError('الاسم يجب أن يكون حرفين على الأقل');
+        return;
+      }
+      
+      if (username.length > 20) {
+        showError('الاسم يجب ألا يزيد عن 20 حرف');
+        return;
+      }
+      
+      // Show loading
+      setLoading(true);
+      hideError();
+      
+      // Login
+      const result = await loginUser(username);
+      
+      setLoading(false);
+      
+      if (result.success) {
+        // Check if banned
+        if (result.error === 'banned') {
+          showBannedScreen();
+        } else {
+          window.location.href = '/lobby';
+        }
+      } else {
+        showError(result.error || 'حدث خطأ أثناء تسجيل الدخول');
+      }
+    });
+    
+    async function checkAndRedirect(session) {
+      const isBanned = await checkBanStatus(session.userId);
+      if (isBanned) {
+        showBannedScreen();
+      } else {
+        window.location.href = '/lobby';
+      }
+    }
+    
+    function showError(message) {
+      loginError.textContent = message;
+      loginError.classList.remove('hidden');
+      usernameInput.focus();
+    }
+    
+    function hideError() {
+      loginError.classList.add('hidden');
+    }
+    
+    function setLoading(loading) {
+      loginBtn.disabled = loading;
+      loginBtnText.textContent = loading ? 'جاري الدخول...' : 'دخول';
+    }
+    
+    function showBannedScreen() {
+      document.getElementById('loginPage').classList.add('hidden');
+      document.getElementById('bannedScreen').classList.remove('hidden');
+    }
+    
+    // Focus input on load
+    usernameInput.focus();
+  </script>
+</body>
+</html>
