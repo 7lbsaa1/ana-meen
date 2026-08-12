@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>اللعبة - أنا مين؟</title>
+  <meta name="description" content="لعبة كرة قدم غامضة 1v1 - اكتشف اللاعب السري">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/game.css">
+</head>
+<body>
+  <!-- Game Page -->
+  <div class="game-page">
+    <!-- Background -->
+    <div class="game-bg"></div>
+    
+    <!-- Header -->
+    <header class="game-header">
+      <div class="game-header-content">
+        <!-- Players -->
+        <div class="game-players">
+          <!-- Blue Player (Host) -->
+          <div class="player-card blue" id="bluePlayerCard">
+            <div class="player-avatar">🔵</div>
+            <div class="player-info">
+              <div class="player-name" id="bluePlayerName">...</div>
+              <div class="player-status" id="bluePlayerStatus">في الانتظار</div>
+            </div>
+          </div>
+          
+          <!-- VS -->
+          <div class="game-vs">VS</div>
+          
+          <!-- Red Player (Guest) -->
+          <div class="player-card red" id="redPlayerCard">
+            <div class="player-avatar">🔴</div>
+            <div class="player-info">
+              <div class="player-name" id="redPlayerName">...</div>
+              <div class="player-status" id="redPlayerStatus">في الانتظار</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Game Info -->
+        <div class="game-info">
+          <div class="room-badge">
+            الغرفة: <strong id="roomBadge">AMN-XXXXX</strong>
+          </div>
+          
+          <button class="theme-toggle" id="themeToggle" title="تبديل المظهر">
+            <span id="themeIcon">☀️</span>
+          </button>
+          
+          <button class="btn btn-ghost btn-sm" id="leaveBtn">
+            خروج
+          </button>
+        </div>
+      </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="game-content">
+      <!-- Selection Phase -->
+      <div id="selectionPhase" class="selection-phase hidden">
+        <h2 class="selection-title">اختر لاعبك السري</h2>
+        <p class="selection-text">
+          فكر في أي لاعب كرة قدم واكتب اسمه.<br>
+          لا يمكن تغيير اختيارك بعد التأكيد!
+        </p>
+        
+        <div class="selection-input-group">
+          <input 
+            type="text" 
+            id="secretInput" 
+            class="selection-input" 
+            placeholder="مثال: محمد صلاح"
+            autocomplete="off"
+          >
+          <p class="selection-hint">
+            💡 تذكر: اختر لاعبًا تعرف معلومات عنه جيدًا
+          </p>
+        </div>
+        
+        <button class="btn btn-primary btn-lg" id="confirmSecretBtn">
+          ✓ تأكيد اللاعب
+        </button>
+      </div>
+      
+      <!-- Waiting Phase -->
+      <div id="waitingPhase" class="waiting-opponent hidden">
+        <div class="waiting-opponent-icon">
+          <div class="waiting-ring"></div>
+          <div class="waiting-ring"></div>
+          <div class="waiting-ring"></div>
+          <div class="waiting-center">⏳</div>
+        </div>
+        
+        <h2 class="waiting-title" id="waitingTitle">في انتظار اللاعب الآخر...</h2>
+        <p class="waiting-text" id="waitingText">
+          انتظر حتى يختار خصمك لاعبًا سريًا
+        </p>
+      </div>
+      
+      <!-- Countdown Phase -->
+      <div id="countdownPhase" class="countdown-phase hidden">
+        <div class="countdown-number" id="countdownNumber">3</div>
+        <p class="countdown-text" id="countdownText">استعد!</p>
+      </div>
+      
+      <!-- Game Board -->
+      <div id="gameBoard" class="game-board hidden">
+        <!-- Chat Area -->
+        <div class="game-chat">
+          <div class="chat-header">
+            <h3 class="chat-title">المحادثة</h3>
+            <span class="turn-indicator" id="turnIndicator">دور الخصم</span>
+          </div>
+          
+          <div class="chat-messages" id="chatMessages">
+            <!-- Messages will be added here -->
+          </div>
+          
+          <div class="chat-input-area">
+            <input 
+              type="text" 
+              id="questionInput" 
+              class="chat-input" 
+              placeholder="اكتب سؤالك هنا... (نعم/لا)"
+              autocomplete="off"
+            >
+            <button class="chat-send-btn" id="sendQuestionBtn">
+              ➤
+            </button>
+          </div>
+        </div>
+        
+        <!-- Game Actions -->
+        <div class="game-actions">
+          <h3 class="actions-title">الإجراءات</h3>
+          
+          <div class="action-buttons">
+            <button class="action-btn secondary" id="guessBtn">
+              🎯 خمن اللاعب
+            </button>
+          </div>
+          
+          <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+            <h4 style="margin-bottom: 1rem; color: var(--text-secondary);">قواعد اللعبة:</h4>
+            <ul style="color: var(--text-muted); font-size: 0.875rem; line-height: 1.8; padding-right: 1rem;">
+              <li>اسأل أسئلة اجابة عليها بنعم أو لا</li>
+              <li>إذا كانت الإجابة <strong style="color: var(--success);">نعم</strong> - دورك يستمر</li>
+              <li>إذا كانت الإجابة <strong style="color: var(--danger);">لا</strong> - الدور ينتقل للخصم</li>
+              <li>خمن اللاعب الصحيح للفوز!</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Game Over Phase -->
+      <div id="gameOverPhase" class="game-over hidden">
+        <div class="game-over-icon" id="gameOverIcon">🏆</div>
+        <h2 class="game-over-title" id="gameOverTitle">فزت!</h2>
+        <p class="game-over-subtitle" id="gameOverSubtitle">لقد اكتشفت اللاعب السري</p>
+        
+        <div class="secret-players">
+          <div class="secret-player-card blue">
+            <div class="secret-player-label" id="winnerSecret">الفائز</div>
+            <div class="secret-player-name" id="winnerSecretName">-</div>
+          </div>
+          <div class="secret-player-card red">
+            <div class="secret-player-label" id="loserSecret">الخاسر</div>
+            <div class="secret-player-name" id="loserSecretName">-</div>
+          </div>
+        </div>
+        
+        <div class="game-over-actions">
+          <button class="btn btn-primary" id="playAgainBtn">
+            🔄 العب مرة أخرى
+          </button>
+          <button class="btn btn-secondary" id="backToLobbyBtn">
+            🏠 العودة للوبي
+          </button>
+        </div>
+      </div>
+    </main>
+    
+    <!-- Report Button -->
+    <button class="btn btn-ghost report-btn" id="reportBtn" title="إبلاغ عن مشكلة">
+      ⚠️ بلاغ
+    </button>
+    
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+  </div>
+  
+  <!-- Scripts -->
+  <script type="module">
+    import { initTheme } from '/js/theme.js';
+    import { requireAuth } from '/js/auth.js';
+    import { initGame } from '/js/game.js';
+    
+    // Initialize theme
+    initTheme();
+    
+    // Check auth and init game
+    if (requireAuth()) {
+      initGame();
+    }
+  </script>
+</body>
+</html>

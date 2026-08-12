@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الوبي - أنا مين؟</title>
+  <meta name="description" content="أنشئ غرفة أو انضم إلى لعبة كرة قدم غامضة 1v1">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/lobby.css">
+</head>
+<body>
+  <!-- Lobby Page -->
+  <div class="lobby-page">
+    <!-- Background -->
+    <div class="lobby-bg"></div>
+    
+    <!-- Particles -->
+    <div class="lobby-particles">
+      <div class="lobby-particle"></div>
+      <div class="lobby-particle"></div>
+      <div class="lobby-particle"></div>
+      <div class="lobby-particle"></div>
+      <div class="lobby-particle"></div>
+      <div class="lobby-particle"></div>
+      <div class="lobby-particle"></div>
+      <div class="lobby-particle"></div>
+      <div class="lobby-particle"></div>
+      <div class="lobby-particle"></div>
+    </div>
+    
+    <!-- Navbar -->
+    <nav class="navbar">
+      <a href="/lobby" class="navbar-brand">
+        <span>أنا</span>
+        <span class="logo-blue">مين؟</span>
+      </a>
+      
+      <div class="navbar-nav">
+        <div class="user-badge">
+          <div class="user-avatar" id="userAvatar">?</div>
+          <span class="user-name" id="userName">...</span>
+          <span class="user-status">
+            <span class="status-dot"></span>
+            متصل
+          </span>
+        </div>
+        
+        <button class="theme-toggle" id="themeToggle" title="تبديل المظهر">
+          <span id="themeIcon">☀️</span>
+        </button>
+        
+        <button class="btn btn-ghost" id="logoutBtn">
+          خروج
+        </button>
+      </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <div class="lobby-content">
+      <!-- Menu Section (Active by default) -->
+      <div id="menuSection" class="lobby-header active">
+        <h1 class="lobby-title">جاهز للتحدي؟</h1>
+        <p class="lobby-subtitle">أنشئ غرفة والعب ضد صديقك في مباراة 1V1</p>
+      </div>
+      
+      <div id="menuSectionCards" class="lobby-cards">
+        <!-- Create Room Card -->
+        <div class="lobby-card" id="createRoomBtn">
+          <div class="lobby-card-icon">➕</div>
+          <h3 class="lobby-card-title">إنشاء غرفة</h3>
+          <p class="lobby-card-text">أنشئ غرفة جديدة ودعوة صديقك للانضمام</p>
+        </div>
+        
+        <!-- Join Room Card -->
+        <div class="lobby-card" id="joinRoomCard">
+          <div class="lobby-card-icon">🎮</div>
+          <h3 class="lobby-card-title">الانضمام إلى غرفة</h3>
+          <p class="lobby-card-text">ادخل كود الغرفة للانضمام إلى لعبة قائمة</p>
+        </div>
+      </div>
+      
+      <!-- Create Room Section -->
+      <div id="createSection" class="create-room-section">
+        <button id="backToMenuBtn" class="btn btn-secondary back-btn">
+          ← رجوع
+        </button>
+        
+        <div class="room-created">
+          <div class="room-created-icon">✓</div>
+          <h2 class="room-created-title">تم إنشاء الغرفة</h2>
+          <p class="room-code-label">أرسل الرابط إلى صديقك:</p>
+          <div class="room-code" id="roomCodeDisplay">AMN-XXXXX</div>
+          
+          <div class="room-link-box" id="roomLinkDisplay">
+            https://...
+          </div>
+          
+          <div class="room-actions">
+            <button class="btn btn-primary" id="copyCodeBtn">
+              📋 نسخ الكود
+            </button>
+            <button class="btn btn-secondary" id="copyLinkBtn">
+              🔗 نسخ الرابط
+            </button>
+            <button class="btn btn-secondary" id="shareBtn">
+              📤 مشاركة
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Join Room Section -->
+      <div id="joinSection" class="join-room-section">
+        <button id="backToMenuBtn2" class="btn btn-secondary back-btn">
+          ← رجوع
+        </button>
+        
+        <form class="join-form" id="joinForm">
+          <h2 class="join-form-title">ادخل كود الغرفة</h2>
+          
+          <div class="join-input-group">
+            <input 
+              type="text" 
+              id="joinRoomInput" 
+              class="join-input" 
+              placeholder="مثال: AMN-X8K29"
+              maxlength="12"
+              autocomplete="off"
+            >
+          </div>
+          
+          <button type="submit" class="btn btn-primary btn-lg w-full">
+            انضمام
+          </button>
+        </form>
+      </div>
+      
+      <!-- Waiting Section -->
+      <div id="waitingSection" class="waiting-section hidden">
+        <div class="waiting-animation">
+          <div class="waiting-ring"></div>
+          <div class="waiting-ring"></div>
+          <div class="waiting-ring"></div>
+          <div class="waiting-icon">⏳</div>
+        </div>
+        
+        <h2 class="waiting-title">في انتظار اللاعب الثاني...</h2>
+        <p class="waiting-text">شارك الكود مع صديقك وانتظر حتى ينضم</p>
+        
+        <div class="waiting-room-code" id="waitingRoomCode">AMN-XXXXX</div>
+        
+        <div class="room-actions" style="margin-top: 2rem;">
+          <button class="btn btn-primary" id="copyWaitingCode">
+            📋 نسخ الكود
+          </button>
+          <button class="btn btn-secondary" id="shareWaitingLink">
+            📤 مشاركة
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+  </div>
+  
+  <!-- Scripts -->
+  <script type="module">
+    import { initTheme } from '/js/theme.js';
+    import { requireAuth, getSession } from '/js/auth.js';
+    import { initLobby, showJoinSection, showMenu } from '/js/lobby.js';
+    
+    // Initialize theme
+    initTheme();
+    
+    // Check auth
+    if (!requireAuth()) {
+      // Will redirect in auth.js
+    } else {
+      // Show user info
+      const session = getSession();
+      if (session) {
+        document.getElementById('userName').textContent = session.username;
+        document.getElementById('userAvatar').textContent = session.username.charAt(0).toUpperCase();
+      }
+      
+      // Initialize lobby
+      initLobby();
+      
+      // Setup join card click
+      const joinRoomCard = document.getElementById('joinRoomCard');
+      if (joinRoomCard) {
+        joinRoomCard.addEventListener('click', () => {
+          showJoinSection();
+          document.getElementById('menuSection').classList.remove('active');
+          document.getElementById('menuSectionCards').classList.add('hidden');
+        });
+      }
+      
+      // Setup back buttons
+      const backToMenuBtns = document.querySelectorAll('#backToMenuBtn, #backToMenuBtn2');
+      backToMenuBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          showMenu();
+          document.getElementById('menuSection').classList.add('active');
+          document.getElementById('menuSectionCards').classList.remove('hidden');
+        });
+      });
+      
+      // Join form submit
+      const joinForm = document.getElementById('joinForm');
+      if (joinForm) {
+        joinForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          // Will be handled by lobby.js
+        });
+      }
+      
+      // Copy waiting code
+      const copyWaitingCode = document.getElementById('copyWaitingCode');
+      if (copyWaitingCode) {
+        copyWaitingCode.addEventListener('click', () => {
+          const code = document.getElementById('waitingRoomCode')?.textContent;
+          if (code) {
+            navigator.clipboard.writeText(code);
+            import('/js/theme.js').then(m => m.showToast('تم نسخ الكود', 'success'));
+          }
+        });
+      }
+      
+      // Share waiting link
+      const shareWaitingLink = document.getElementById('shareWaitingLink');
+      if (shareWaitingLink) {
+        shareWaitingLink.addEventListener('click', async () => {
+          const roomCode = document.getElementById('waitingRoomCode')?.textContent;
+          if (roomCode) {
+            const shareData = {
+              title: 'لعبة أنا مين؟',
+              text: `انضم إلى لعبتي!`,
+              url: `${window.location.origin}/game?room=${roomCode}`
+            };
+            
+            if (navigator.share) {
+              try {
+                await navigator.share(shareData);
+              } catch (e) {
+                if (e.name !== 'AbortError') {
+                  navigator.clipboard.writeText(shareData.url);
+                  import('/js/theme.js').then(m => m.showToast('تم نسخ الرابط', 'success'));
+                }
+              }
+            } else {
+              navigator.clipboard.writeText(shareData.url);
+              import('/js/theme.js').then(m => m.showToast('تم نسخ الرابط', 'success'));
+            }
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>

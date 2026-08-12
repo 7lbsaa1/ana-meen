@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم - أنا مين؟</title>
+  <meta name="description" content="لوحة تحكم المسؤول - إدارة المستخدمين والبلاغات">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <!-- Admin Page -->
+  <div class="admin-page">
+    <!-- Background -->
+    <div class="admin-bg"></div>
+    
+    <!-- Navbar -->
+    <nav class="navbar">
+      <a href="/lobby" class="navbar-brand">
+        <span>لوحة التحكم</span>
+        <span class="logo-blue">- أنا مين؟</span>
+      </a>
+      
+      <div class="navbar-nav">
+        <div class="user-badge">
+          <div class="user-avatar" id="userAvatar">A</div>
+          <span class="user-name" id="userName">...</span>
+          <span class="user-status">
+            <span class="status-dot"></span>
+            مدير
+          </span>
+        </div>
+        
+        <button class="theme-toggle" id="themeToggle" title="تبديل المظهر">
+          <span id="themeIcon">☀️</span>
+        </button>
+        
+        <button class="btn btn-ghost" id="logoutBtn">
+          خروج
+        </button>
+      </div>
+    </nav>
+    
+    <!-- Main Layout -->
+    <div class="admin-layout">
+      <!-- Sidebar -->
+      <aside class="admin-sidebar">
+        <nav class="admin-nav">
+          <button class="admin-nav-item active" data-section="users">
+            👥 المستخدمين
+            <span class="badge" id="totalUsersBadge">0</span>
+          </button>
+          
+          <button class="admin-nav-item" data-section="reports">
+            📋 البلاغات
+            <span class="badge badge-danger" id="pendingReportsBadge">0</span>
+          </button>
+          
+          <div class="admin-nav-divider"></div>
+          
+          <button class="admin-nav-item" onclick="window.location.href='/lobby'">
+            🎮 العودة للعبة
+          </button>
+        </nav>
+      </aside>
+      
+      <!-- Main Content -->
+      <main class="admin-main">
+        <!-- Stats Cards -->
+        <div class="admin-stats">
+          <div class="stat-card">
+            <div class="stat-card-icon blue">👥</div>
+            <div class="stat-card-content">
+              <div class="stat-card-value" id="totalUsers">0</div>
+              <div class="stat-card-label">إجمالي المستخدمين</div>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-card-icon green">🟢</div>
+            <div class="stat-card-content">
+              <div class="stat-card-value" id="onlineUsers">0</div>
+              <div class="stat-card-label">متصلين الآن</div>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-card-icon red">🚫</div>
+            <div class="stat-card-content">
+              <div class="stat-card-value" id="bannedUsers">0</div>
+              <div class="stat-card-label">محظورين</div>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-card-icon purple">🎮</div>
+            <div class="stat-card-content">
+              <div class="stat-card-value" id="totalGames">0</div>
+              <div class="stat-card-label">إجمالي المباريات</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Users Section -->
+        <section class="admin-section" id="usersSection">
+          <div class="admin-section-header">
+            <h2 class="admin-section-title">
+              👥 إدارة المستخدمين
+            </h2>
+            
+            <button class="btn btn-sm btn-secondary" id="refreshUsersBtn">
+              🔄 تحديث
+            </button>
+          </div>
+          
+          <!-- Table Controls -->
+          <div class="table-controls">
+            <div class="search-box">
+              <i>🔍</i>
+              <input 
+                type="text" 
+                id="searchInput" 
+                placeholder="بحث بالاسم أو ID..."
+              >
+            </div>
+            
+            <select class="filter-select" id="filterSelect">
+              <option value="all">الكل</option>
+              <option value="online">متصلين</option>
+              <option value="offline">غير متصلين</option>
+              <option value="banned">محظورين</option>
+            </select>
+          </div>
+          
+          <!-- Users Table -->
+          <div class="users-table-container">
+            <table class="users-table">
+              <thead>
+                <tr>
+                  <th>المستخدم</th>
+                  <th>الحالة</th>
+                  <th>المباريات</th>
+                  <th>الانتصارات</th>
+                  <th>تاريخ التسجيل</th>
+                  <th>آخر ظهور</th>
+                  <th>إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody">
+                <tr>
+                  <td colspan="7" class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <p class="loading-text">جاري التحميل...</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <!-- Pagination -->
+          <div class="pagination" id="usersPagination">
+            <!-- Pagination will be added here -->
+          </div>
+        </section>
+        
+        <!-- Reports Section -->
+        <section class="admin-section hidden" id="reportsSection">
+          <div class="admin-section-header">
+            <h2 class="admin-section-title">
+              📋 البلاغات
+              <span class="badge badge-danger" id="pendingReports">0</span>
+            </h2>
+            
+            <button class="btn btn-sm btn-secondary" id="refreshReportsBtn">
+              🔄 تحديث
+            </button>
+          </div>
+          
+          <!-- Reports Table -->
+          <div class="users-table-container">
+            <table class="users-table reports-table">
+              <thead>
+                <tr>
+                  <th>المبلّغ</th>
+                  <th>المُبلَّغ عنه</th>
+                  <th>السبب</th>
+                  <th>الوصف</th>
+                  <th>التاريخ</th>
+                  <th>إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="reportsTableBody">
+                <tr>
+                  <td colspan="6" class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <p class="loading-text">جاري التحميل...</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+    
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+  </div>
+  
+  <!-- Scripts -->
+  <script type="module">
+    import { initTheme } from '/js/theme.js';
+    import { getSession } from '/js/auth.js';
+    import { initAdmin } from '/js/admin.js';
+    
+    // Initialize theme
+    initTheme();
+    
+    // Show user info
+    const session = getSession();
+    if (session) {
+      document.getElementById('userName').textContent = session.username;
+      document.getElementById('userAvatar').textContent = session.username.charAt(0).toUpperCase();
+    }
+    
+    // Initialize admin
+    initAdmin();
+  </script>
+</body>
+</html>
